@@ -1,0 +1,20 @@
+#!/bin/bash
+
+rm -f testreport.txt
+
+#for i in Test?.scm Test??.scm Test???.scm; do
+for i in Test?.scm Test??.scm; do
+    scheme48 < $i >> testreport.txt 2>&1
+done
+
+let "pass = `grep PASS testreport.txt | wc -l`"
+let "fail = `grep FAIL testreport.txt | wc -l`"
+let "n = `ls Test*.scm | wc -l`"
+errors=`echo "$n-$pass-$fail" | bc -q`
+
+egrep 'PASS|FAIL' testreport.txt > report.txt
+echo >> report.txt
+echo "Summary:" >> report.txt
+echo "  PASS: $pass" >> report.txt
+echo "  FAIL: $fail" >> report.txt
+echo "  Errors: $errors" >> report.txt
